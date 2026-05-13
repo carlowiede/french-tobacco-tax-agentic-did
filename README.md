@@ -215,4 +215,4 @@ If you use this replication package or the agentic framework in your own researc
 
 - **Stata MCP / Stata Workbench** by Thomas Monk (LSE) — https://github.com/tmonk/mcp-stata
 - **Claude Code** by Anthropic — https://claude.ai/code
-- **SHARE data** — Börsch-Supan et al. (2013), release 9.0.0
+- **SHARE data** release 9.0.0
