@@ -20,33 +20,34 @@ The entire empirical pipeline was executed through an agentic AI framework: Clau
 
 ```
 /
-├── README.md                  ← This file
-├── CLAUDE.md                  ← Agent configuration file (meta-level instructions)
-├── REPLICATION.md             ← Step-by-step replication guide
-├── run_all.do                 ← Master do-file: runs the entire pipeline in sequence
-├── results_summary.md         ← Verified Stata output for all reported results
+├── README.md                      ← This file
+├── CLAUDE.md                      ← Agent configuration file (meta-level instructions)
+├── REPLICATION.md                 ← Step-by-step replication guide
+├── run_all.do                     ← Master do-file: runs the entire pipeline in sequence
+├── results_summary.md             ← Verified Stata output for all reported results
 │
 ├── do-files/
-│   ├── 00b_merge_income.do    ← Merge income module
-│   ├── 01_merge.do            ← Merge SHARE modules
-│   ├── 02_clean.do            ← Data cleaning and variable construction
-│   ├── 03_forwardfill.do      ← Forward-fill imputation for skip-pattern logic
-│   ├── 04_sample.do           ← Sample construction (France + Germany, 50+)
-│   ├── 05_descriptives.do     ← Descriptive statistics (Table 1)
-│   ├── 06_parallel_trends.do  ← Parallel trends: visual plot + placebo DiDs
-│   ├── 07_main.do             ← Primary results: OLS and TWFE (Table 2)
-│   ├── 08_robustness.do       ← Robustness checks R1–R5 (Table 3)
-│   ├── 09_heterogeneity.do    ← Heterogeneous effects: sex, education, age
-│   ├── 10_income_het.do       ← Income heterogeneity (triple interaction + stratified)
-│   ├── 11_event_study.do      ← Event study (Figure 2)
-│   ├── 12_income_heterogeneity.do  ← Extended income heterogeneity specification
-│   └── 13_descriptive_table.do     ← Formatted Table 1 output
+│   ├── 00b_merge_income.do        ← Merge co007_ income proxy; partner-fill within household
+│   ├── 01_build_panel.do          ← Assemble FR+DE panel from SHARE waves 1/2/4/5/6/8/9
+│   ├── 02_build_outcomes.do       ← Forward-fill current_smoker; build DiD variables
+│   ├── 03_did_baseline.do         ← Primary, interim, and sensitivity DiD estimates
+│   ├── 04_parallel_trends.do      ← Placebo DiDs and event study
+│   ├── 05_robustness.do           ← Robustness checks R1–R5
+│   ├── 06_heterogeneity.do        ← Heterogeneous effects: sex, education, age
+│   ├── 07_wave9_extended.do       ← Pooled post specifications
+│   ├── 12_income_heterogeneity.do ← Income heterogeneity: triple interaction + stratified
+│   └── robustness_table.do        ← Export robustness table to output/
 │
 └── .claude/
     └── commands/
-        ├── did.md             ← /did slash command
-        ├── robustness.md      ← /robustness slash command
-        └── writeup.md         ← /writeup slash command
+        ├── setup.md               ← /setup command
+        ├── did.md                 ← /did command
+        ├── parallel-trends.md     ← /parallel-trends command
+        ├── event-study.md         ← /event-study command
+        ├── robustness.md          ← /robustness command
+        ├── heterogeneity.md       ← /heterogeneity command
+        ├── writeup.md             ← /writeup command
+        └── compare.md             ← /compare command
 ```
 
 ---
