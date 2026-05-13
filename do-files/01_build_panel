@@ -1,0 +1,84 @@
+*------------------------------------------------------------------------------
+* 01_build_panel.do
+*
+* Build FR+DE panel, age >= 50 at interview, for France tobacco-tax DiD.
+* Waves used: 1, 2, 4, 5, 6, 8, 9  (Wave 3 = SHARELIFE, no br module;
+*                                   Wave 7 = SHARELIFE-mixed, unusable).
+*
+* Output: data_build/panel_frde_raw.dta
+*   one row per (mergeid, wave); variables: country, gender, age_int,
+*   int_year, yrbirth, isced1997_r, br001_, br002_, br006_, wave
+*------------------------------------------------------------------------------
+
+clear all
+set more off
+version 17
+
+local root "$root"
+local shr  "`root'/SHARE WAVES"
+local out  "`root'/data_build"
+cap mkdir  "`out'"
+
+tempfile panel
+
+local first = 1
+foreach w in 1 2 4 5 6 8 9 {
+
+    display as text _newline "=== WAVE `w' ==="
+
+    * cv_r : base demographics
+    use mergeid country gender age_int int_year yrbirth ///
+        using "`shr'/sharew`w'_rel9-0-0_cv_r.dta", clear
+    keep if country == 17 | country == 12   // France, Germany
+    keep if age_int >= 50 & !missing(age_int)
+
+    * br : smoking module
+    cap merge 1:1 mergeid using "`shr'/sharew`w'_rel9-0-0_br.dta", ///
+        keepusing(br001_ br002_ br006_) keep(match master) nogen
+    if _rc {
+        * br006_ missing in Waves 4 and 5 — retry without it
+        cap merge 1:1 mergeid using "`shr'/sharew`w'_rel9-0-0_br.dta", ///
+            keepusing(br001_ br002_) keep(match master) nogen
+        gen double br006_ = .
+    }
+
+    * gv_isced : harmonised education
+    cap merge 1:1 mergeid using "`shr'/sharew`w'_rel9-0-0_gv_isced.dta", ///
+        keepusing(isced1997_r) keep(match master) nogen
+    if _rc {
+        gen double isced1997_r = .
+    }
+
+    gen byte wave = `w'
+
+    * make sure core smoking vars exist even if entirely missing this wave
+    cap confirm variable br001_
+    if _rc gen double br001_ = .
+    cap confirm variable br002_
+    if _rc gen double br002_ = .
+    cap confirm variable br006_
+    if _rc gen double br006_ = .
+
+    keep mergeid wave country gender age_int int_year yrbirth ///
+         isced1997_r br001_ br002_ br006_
+
+    if `first' {
+        save "`panel'", replace
+        local first = 0
+    }
+    else {
+        append using "`panel'"
+        save "`panel'", replace
+    }
+}
+
+use "`panel'", clear
+
+* sanity
+tab wave country, missing
+compress
+label data "FR+DE age 50+ panel, SHARE r9-0-0, waves 1/2/4/5/6/8/9"
+save "`out'/panel_frde_raw.dta", replace
+
+display as result _newline "Saved: `out'/panel_frde_raw.dta"
+count
