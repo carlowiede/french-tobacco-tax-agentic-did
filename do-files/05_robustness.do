@@ -68,7 +68,12 @@ restore
 
 *------------------------------------------------------------------------------
 * R4. Alternative clustering: country-wave (4 clusters)
-*     Note: TWFE with pid FE is degenerate under 4-cluster VCE (pids perfectly
+*     NOTE: This check is NOT reported in the thesis. With only 2 countries,
+*     country-level clustering produces only 2 clusters (unreliable). The
+*     country-wave alternative (4 clusters) is also too few for reliable
+*     inference and adds no information beyond the headline pid-clustered
+*     estimate. Retained here for completeness only.
+*     TWFE with pid FE is degenerate under 4-cluster VCE (pids perfectly
 *     nested within country-wave) — OLS only, presented for reference.
 *------------------------------------------------------------------------------
 display as result _newline "=== R4. Alt clustering: country-wave (4 clusters), OLS only ==="
